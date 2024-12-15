@@ -1,0 +1,258 @@
+[
+  {
+    "ContainingType": "FireboxGo.Controllers.DocController",
+    "Method": "CreateDoc",
+    "RelativePath": "api/Doc/createDoc",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "docModel",
+        "Type": "FireboxGo.Models.DocModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.DocController",
+    "Method": "GetDocs",
+    "RelativePath": "api/Doc/user/{userID}/docs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userID",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[FireboxGo.Models.DocModel, FireboxGo, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.DocController",
+    "Method": "DeleteDoc",
+    "RelativePath": "api/Doc/user/{userID}/docs/{docID}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "docModel",
+        "Type": "FireboxGo.Models.DocModel",
+        "IsRequired": true
+      },
+      {
+        "Name": "userID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "docID",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.DocController",
+    "Method": "SearchDocs",
+    "RelativePath": "api/Doc/user/{userID}/docs/docSearch/{search}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "docModel",
+        "Type": "FireboxGo.Models.DocModel",
+        "IsRequired": true
+      },
+      {
+        "Name": "userID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "search",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.ItemController",
+    "Method": "CreateItem",
+    "RelativePath": "api/Item/createItem",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemModel",
+        "Type": "FireboxGo.Models.ItemModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.ItemController",
+    "Method": "UpdateItem",
+    "RelativePath": "api/Item/updateItem",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemModel",
+        "Type": "FireboxGo.Models.ItemModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.ItemController",
+    "Method": "GetItems",
+    "RelativePath": "api/Item/user/{userID}/folders/{folderID}/item",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemModel",
+        "Type": "FireboxGo.Models.ItemModel",
+        "IsRequired": true
+      },
+      {
+        "Name": "userID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "folderID",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.ItemController",
+    "Method": "SearchItem",
+    "RelativePath": "api/Item/user/{userID}/folders/{folderID}/item/itemSearch/{search}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemModel",
+        "Type": "FireboxGo.Models.ItemModel",
+        "IsRequired": true
+      },
+      {
+        "Name": "userID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "folderID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "search",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.ItemController",
+    "Method": "DeleteItem",
+    "RelativePath": "api/Item/user/{userID}/folders/{folderID}/items/{itemID}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemModel",
+        "Type": "FireboxGo.Models.ItemModel",
+        "IsRequired": true
+      },
+      {
+        "Name": "userID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "folderID",
+        "Type": "",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemID",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/User/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userModel",
+        "Type": "FireboxGo.Models.UserModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.UserController",
+    "Method": "Register",
+    "RelativePath": "api/User/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userModel",
+        "Type": "FireboxGo.Models.UserModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FireboxGo.Controllers.UserController",
+    "Method": "Test",
+    "RelativePath": "api/User/test",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
