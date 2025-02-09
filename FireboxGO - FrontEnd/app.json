@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "fireboxgo",
+    "slug": "fireboxgo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": ["INTERNET"],
+      "networkSecurityConfig": {
+        "domainConfigs": [
+          {
+            "domain": "*.example.com",
+            "cleartextTrafficPermitted": true
+          }
+        ]
+      },
+      "package": "com.xguardwatchx.fireboxgo"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/Logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6bb0fa79-352f-4d6d-baf9-60abf96db87a"
+      }
+    }
+  }
+}
