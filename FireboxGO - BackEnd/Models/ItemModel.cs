@@ -1,4 +1,6 @@
-﻿namespace FireboxGo.Models
+﻿using System.Buffers.Text;
+
+namespace FireboxGo.Models
 {
     public class ItemModel
     {
@@ -18,7 +20,7 @@
 
         public List<String> itemTags { get; set; }
 
-        public byte[] itemImage {  get; set; }
+        public string itemImage {  get; set; }
 
         public int folderID { get; set; }
 
@@ -34,12 +36,12 @@
             description = "";
             ownershipAge = 0;
             itemTags = new List<String>();
-            itemImage = new byte[0];
+            itemImage = "";
             folderID = 0;
             userID = 0;
         }
 
-        public ItemModel(int ID, string itemName, DateOnly purchaseDate, decimal purchasePrice, decimal retailPrice, string description, int ownershipAge, List<String> itemTags, byte[] itemImage, int folderID, int userID)
+        public ItemModel(int ID, string itemName, DateOnly purchaseDate, decimal purchasePrice, decimal retailPrice, string description, int ownershipAge, List<String> itemTags, string itemImage, int folderID, int userID)
         {
             this.ID = ID;
             this.itemName = itemName;

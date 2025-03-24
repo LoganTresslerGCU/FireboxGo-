@@ -1,7 +1,12 @@
 ﻿using FireboxGo.Models;
 using FireboxGo.Security;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using System.Reflection.PortableExecutable;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Xml.Linq;
 
 namespace FireboxGo.DAOs
 {
@@ -13,9 +18,9 @@ namespace FireboxGo.DAOs
         public List<FolderModel> GetFolders(int userID)
         {
             List<FolderModel> folders = new List<FolderModel>();
-            Dictionary<int, FolderModel> folderDictionary = new Dictionary<int, FolderModel>();
+            FolderModel newFolder = new FolderModel();
 
-            string sqlStatement = "SELECT fireboxgo.rooms.ID, fireboxgo.rooms.ROOM_NAME, fireboxgo.rooms.DESCRIPTION, fireboxgo.tags.TAG_NAME FROM fireboxgo.rooms LEFT JOIN fireboxgo.room_taggings ON fireboxgo.rooms.ID = fireboxgo.room_taggings.rooms_ID LEFT JOIN fireboxgo.tags ON fireboxgo.room_taggings.tags_ID = fireboxgo.tags.ID WHERE fireboxgo.rooms.accounts_ID = @accounts_ID";
+            string sqlStatement = "SELECT fireboxgo.rooms.ID, fireboxgo.rooms.ROOM_NAME, fireboxgo.rooms.DESCRIPTION, GROUP_CONCAT(tags.TAG_NAME ORDER BY tags.TAG_NAME SEPARATOR ', ') AS Tags FROM fireboxgo.rooms LEFT JOIN fireboxgo.room_taggings ON rooms.ID = room_taggings.rooms_ID LEFT JOIN fireboxgo.tags ON room_taggings.tags_ID = tags.ID WHERE rooms.accounts_ID = @accounts_ID GROUP BY rooms.ID, rooms.ROOM_NAME, rooms.DESCRIPTION ORDER BY ROOM_NAME ASC";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -31,28 +36,30 @@ namespace FireboxGo.DAOs
                     {
                         while (reader.Read())
                         {
-                            int folderID = reader.GetInt32("ID");
-                            string folderName = reader.GetString("ROOM_NAME");
-                            string description = reader.GetString("DESCRIPTION");
-                            string tagName = reader.IsDBNull(reader.GetOrdinal("TAG_NAME")) ? null : reader.GetString("TAG_NAME");
+                            List<string> tags = new List<string>();
+                            string tagsString = reader.IsDBNull(3) ? string.Empty : reader.GetString(3);
 
-                            // Tie retrieved tags to their given folder by folderID
-                            if (!folderDictionary.ContainsKey(folderID))
+                            // Get the tags and store them in a list for the folder model
+                            string[] tagsArray = tagsString.Split(',');
+                            foreach (var tag in tagsArray)
                             {
-                                folderDictionary[folderID] = new FolderModel
+                                string trimmedTag = tag.Trim();
+                                if (!string.IsNullOrEmpty(trimmedTag))
                                 {
-                                    ID = folderID,
-                                    folderName = folderName,
-                                    description = description,
-                                    folderTags = new List<string>(),
-                                    userID = userID
-                                };
+                                    tags.Add(trimmedTag);
+                                }
                             }
 
-                            if (tagName != null)
-                            {
-                                folderDictionary[folderID].folderTags.Add(tagName);
-                            }
+                            // Add room to results
+                            folders.Add(
+                                newFolder = new FolderModel(
+                                    reader.GetInt32(0),
+                                    reader.GetString(1),
+                                    reader.GetString(2),
+                                    tags,
+                                    userID
+                                )
+                            );
                         }
                     }
                     reader.Close();
@@ -63,7 +70,6 @@ namespace FireboxGo.DAOs
                     Console.WriteLine(ex.Message);
                 }
             }
-            folders.AddRange(folderDictionary.Values);
             return folders;
         }
 

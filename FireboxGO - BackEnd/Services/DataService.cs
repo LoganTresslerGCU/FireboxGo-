@@ -11,15 +11,17 @@ namespace FireboxGo.Services
         UserDAO userDAO = new UserDAO();
         FolderDAO folderDAO = new FolderDAO();
         ItemDAO itemDAO = new ItemDAO();
+        DocDAO docDAO = new DocDAO();
 
         SecurityHasher securityHasher = new SecurityHasher();
 
         // Data Access Object instantiations
-        public DataService(UserDAO userDAO, FolderDAO folderDAO, ItemDAO itemDAO, SecurityHasher securityHasher)
+        public DataService(UserDAO userDAO, FolderDAO folderDAO, ItemDAO itemDAO, DocDAO docDAO, SecurityHasher securityHasher)
         {
             this.userDAO = userDAO;
             this.folderDAO = folderDAO;
             this.itemDAO = itemDAO;
+            this.docDAO = docDAO;
             this.securityHasher = securityHasher;
         }
 
@@ -40,6 +42,30 @@ namespace FireboxGo.Services
         public int GetUserIDService(UserModel user)
         {
             return userDAO.GetUserID(user);
+        }
+
+        // Calls account info service from the controller
+        public UserModel GetAccountInfoService(int userID)
+        {
+            return userDAO.GetAccountInfo(userID);
+        }
+
+        // Calls household totals service from the controller
+        public List<decimal> GetHouseholdTotalsService(int userID)
+        {
+            return userDAO.GetHouseholdTotals(userID);
+        }
+
+        // Calls name search all service from the controller
+        public List<object> NameSearchAllService(string search, int userID)
+        {
+            return userDAO.NameSearchAll(search, userID);
+        }
+
+        // Calls tag search all service from the controller
+        public List<object> TagSearchAllService(string search, int userID)
+        {
+            return userDAO.TagSearchAll(search, userID);
         }
 
         // Calls get folders service from the controller
@@ -100,6 +126,24 @@ namespace FireboxGo.Services
         public decimal GetRoomValueService(int folderID)
         {
             return itemDAO.GetRoomValue(folderID);
+        }
+
+        // Calls get files service from the controller
+        public List<DocModel> GetFilesService(int userID)
+        {
+            return docDAO.GetFiles(userID);
+        }
+
+        // Calls upload file service from the controller
+        public bool UploadFileService(DocModel newDoc, int userID)
+        {
+            return docDAO.UploadFile(newDoc, userID);
+        }
+
+        // Calls delete file service from the controller
+        public bool DeleteFileService(int docID)
+        {
+            return docDAO.DeleteFile(docID);
         }
     }
 }

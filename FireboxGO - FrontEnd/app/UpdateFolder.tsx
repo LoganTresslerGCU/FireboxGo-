@@ -21,7 +21,7 @@ export default function UpdateFolderScreen() {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/tags', {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/tags', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -53,7 +53,7 @@ export default function UpdateFolderScreen() {
 
     const handleUpdate = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/folder/updateFolder/' + userID + '/' + folderID, {
+            const response = await fetch('http://172.24.44.3:5189/api/folder/updateFolder/' + userID + '/' + folderID, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ folderName: folderName, description: description, folderTags: folderTags })
@@ -77,7 +77,7 @@ export default function UpdateFolderScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <BannerNav />
+                    <BannerNav passedData={userID}/>
                     <Text>Edit Your Room Folder</Text>
 
                     <Text>Room Name</Text>

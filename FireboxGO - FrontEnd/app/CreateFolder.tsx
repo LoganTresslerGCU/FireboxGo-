@@ -20,12 +20,12 @@ export default function CreateFolderScreen() {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/tags', {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/tags', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                if (!response.ok || availableTags.length < 1) {
+                if (!response.ok) {
                     setErrorMessage({ response: '', tags: 'Failed to retrieve tags. Reload and try again.' });
                 }
 
@@ -47,12 +47,13 @@ export default function CreateFolderScreen() {
     };
 
     const handleSubmit = () => {
+        setErrorMessage({ response: '', tags: '' });
         handleCreate();
     }
 
     const handleCreate = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/folder/createFolder/' + userID, {
+            const response = await fetch('http://172.24.44.3:5189/api/folder/createFolder/' + userID, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ folderName: folderName, description: description, folderTags: folderTags })
@@ -75,7 +76,7 @@ export default function CreateFolderScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <BannerNav />
+                    <BannerNav passedData={userID}/>
                     <Text>Create a Room Folder</Text>
 
                     <Text>Room Name</Text>

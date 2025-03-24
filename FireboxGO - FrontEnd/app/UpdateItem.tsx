@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TextInput, View, StyleSheet, Text, Button, Image, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Checkbox } from 'react-native-paper';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import BannerNav from '../components/BannerNav';
 
 export default function UpdateItemScreen() {
@@ -20,6 +22,7 @@ export default function UpdateItemScreen() {
     const [itemTags, setItemTags] = useState(route?.params?.itemTags);
     const [itemImage, setItemImage] = useState(route?.params?.itemImage);
     const [folderID, setFolderID] = useState(route?.params?.folderID);
+    const [imageSelected, setImageSelected] = useState('No Image Selected');
 
     const [availableFolders, setAvailableFolders] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
@@ -30,12 +33,12 @@ export default function UpdateItemScreen() {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/tags', {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/tags', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                if (!response.ok || availableTags.length < 1) {
+                if (!response.ok) {
                     setErrorMessage({ response: '', tags: 'Failed to retrieve tags. Reload and try again.', folders: '' });
                 }
 
@@ -51,16 +54,13 @@ export default function UpdateItemScreen() {
     useEffect(() => {
         const fetchFolders = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/home/' + userID, {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/home/' + userID, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
                 if (!response.ok) {
                     setErrorMessage({ response: '', tags: '', folders: 'Failed to retrieve your folders. Reload and try again.' });
-                }
-                else if(availableFolders.length < 1){
-                    setErrorMessage({ response: '', tags: '', folders: 'No folders found. Please make a folder first.' });
                 }
 
                 const folderData = await response.json();
@@ -71,6 +71,28 @@ export default function UpdateItemScreen() {
         };
         fetchFolders();
     }, []);
+
+    const pickFile = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: "image/*"
+            });
+
+            if (result && result.assets && result.assets.length > 0) {
+                const uri = result.assets[0].uri;
+
+                const base64 = await FileSystem.readAsStringAsync(uri, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+                setImageSelected('Image Is Selected');
+                setItemImage(base64);
+            } else {
+                setErrorMessage({ response: '', image: 'Error Picking Image', tags: '', folders: '' });
+            }
+        } catch (err) {
+            setErrorMessage({ response: '', image: 'Unknown Error', tags: '', folders: '' });
+        }
+    };
 
     const toggleTag= (tag: string) => {
         setItemTags(prevTags =>
@@ -100,7 +122,7 @@ export default function UpdateItemScreen() {
 
     const handleUpdate = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/item/updateItem/' + userID + '/' + itemID, {
+            const response = await fetch('http://172.24.44.3:5189/api/item/updateItem/' + userID + '/' + itemID, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -123,7 +145,7 @@ export default function UpdateItemScreen() {
                 navigation.navigate('Home', { userID: apiResponse })
             }
             else {
-                setErrorMessage({ response: 'Failed to create item. Reload and try again.', tags: '', folders: '' });
+                setErrorMessage({ response: 'Failed to update item. Reload and try again.', tags: '', folders: '' });
             }
         } catch (error) {
             setErrorMessage({ response: 'Server Error.', tags: '', folders: '' });
@@ -134,8 +156,24 @@ export default function UpdateItemScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <BannerNav />
+                    <BannerNav passedData={userID}/>
                     <Text style={styles.title}>Edit Your Item</Text>
+
+                    <View style={styles.imageContainer}>
+                        {itemImage ? (
+                            itemImage.startsWith('data:image/jpeg') ? (
+                                <Image style={styles.image} source={{ uri: `data:image/jpeg;base64,${itemImage}` }} />
+                            ) : (
+                                <Image style={styles.image} source={{ uri: `data:image/png;base64,${itemImage}` }} />
+                            )
+                        ) : (
+                            <Text style={styles.title}>No Image</Text>
+                        )}
+                    </View>
+
+                    <Button title="Add Image" onPress={pickFile}/>
+                    <Text>{imageSelected}</Text>
+                    {errorMessage.image ? <Text style={{ color: 'red' }}>{errorMessage.image}</Text> : null}
 
                     <Text style={styles.label}>Item Name</Text>
                     <TextInput
@@ -290,4 +328,17 @@ const styles = StyleSheet.create({
         padding: 8,
         marginBottom: 10
     },
+    imageContainer: {
+        width: 200,
+        height: 200,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+        margin: 10
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "contain",
+    }
 });

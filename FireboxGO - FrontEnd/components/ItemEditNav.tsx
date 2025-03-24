@@ -20,7 +20,7 @@ export default function ItemEditNav() {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/item/deleteItem/' + itemID, {
+            const response = await fetch('http://172.24.44.3:5189/api/item/deleteItem/' + itemID, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -40,7 +40,7 @@ export default function ItemEditNav() {
     }
 
     const showError = (message) => {
-      Alert.alert('Error', message, [{ text: 'OK' }]);
+        Alert.alert('Error', message, [{ text: 'OK' }]);
     };
 
     return (

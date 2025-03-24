@@ -7,8 +7,9 @@ export default function LandingScreen() {
 
     return (
         <View style={styles.container}>
+            <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
             <Text style={styles.titleFBG}>FireboxGO!</Text>
-            <Image source={require('@/assets/images/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
+
             <Button title="Login" onPress={() => navigation.navigate('Login')} />
             <Button title="Register" onPress={() => navigation.navigate('Register')} />
         </View>

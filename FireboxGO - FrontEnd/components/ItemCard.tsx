@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function ItemCard({ id, itemName, purchaseDate, purchasePrice, retailPrice, description, ownershipAge, itemTags, itemImage, folderID, userID }) {
+export default function ItemCard({ id, itemName, purchaseDate, purchasePrice, retailPrice, description, ownershipAge, itemTags, itemImage, folderID, userID, folderName }) {
     const navigation = useNavigation();
 
     const handlePress = () => {
@@ -15,8 +15,10 @@ export default function ItemCard({ id, itemName, purchaseDate, purchasePrice, re
             description: description,
             ownershipAge: ownershipAge,
             itemTags: itemTags,
+            itemImage: itemImage,
             folderID: folderID,
-            userID: userID
+            userID: userID,
+            folderName: folderName
         });
     }
 
@@ -24,9 +26,13 @@ export default function ItemCard({ id, itemName, purchaseDate, purchasePrice, re
         <TouchableOpacity style={styles.card} onPress={handlePress}>
             <View style={styles.imageContainer}>
                 {itemImage ? (
-                    <Image source={{ uri: itemImage }} style={styles.image} />
+                    itemImage.startsWith('data:image/jpeg') ? (
+                        <Image style={styles.image} source={{ uri: `data:image/jpeg;base64,${itemImage}` }} />
+                    ) : (
+                        <Image style={styles.image} source={{ uri: `data:image/png;base64,${itemImage}` }} />
+                    )
                 ) : (
-                    <View style={styles.placeholder} />
+                    <Text style={styles.title}>No Image</Text>
                 )}
             </View>
             <Text style={styles.title}>{itemName}</Text>
@@ -36,38 +42,26 @@ export default function ItemCard({ id, itemName, purchaseDate, purchasePrice, re
 
 const styles = StyleSheet.create({
     card: {
+        alignItems: "center"
+    },
+    imageContainer: {
         width: 100,
         height: 100,
         backgroundColor: "#B2B6B8",
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,
-        margin: 10,
-        padding: 5,
-    },
-    imageContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 8,
-        overflow: "hidden",
-        backgroundColor: "#FFFFFF",
-        justifyContent: "center",
-        alignItems: "center",
+        margin: 10
     },
     image: {
         width: "100%",
         height: "100%",
         resizeMode: "contain",
     },
-    placeholder: {
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#FFFFFF"
-    },
     title: {
+        width: 100,
         color: "black",
         fontWeight: "bold",
-        textAlign: "center",
-        marginTop: 5,
+        textAlign: "center"
     },
 });

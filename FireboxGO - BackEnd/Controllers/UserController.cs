@@ -77,5 +77,33 @@ namespace FireboxGo.Controllers
                 return BadRequest(-4);
             }
         }
+
+        // Get account information by user ID
+        [HttpGet("info/{userID}")]
+        public IActionResult AccountInfo(int userID)
+        {
+            return Ok(dataService.GetAccountInfoService(userID));
+        }
+
+        // Get household prices by user ID
+        [HttpGet("totals/{userID}")]
+        public IActionResult HouseholdTotals(int userID)
+        {
+            return Ok(dataService.GetHouseholdTotalsService(userID));
+        }
+
+        // Get results by name by search string
+        [HttpGet("searchName/{search}/{userID}")]
+        public IActionResult NameSearchAll(string search, int userID)
+        {
+            return Ok(dataService.NameSearchAllService(search, userID));
+        }
+
+        // Get results by tag by search string
+        [HttpGet("searchTags/{search}/{userID}")]
+        public IActionResult TagSearchAll(string search, int userID)
+        {
+            return Ok(dataService.TagSearchAllService(search, userID));
+        }
     }
 }

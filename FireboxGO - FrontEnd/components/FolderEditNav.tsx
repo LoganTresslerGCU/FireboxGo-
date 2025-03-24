@@ -14,7 +14,7 @@ export default function FolderEditNav() {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/folder/deleteFolder/' + folderID, {
+            const response = await fetch('http://172.24.44.3:5189/api/folder/deleteFolder/' + folderID, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });

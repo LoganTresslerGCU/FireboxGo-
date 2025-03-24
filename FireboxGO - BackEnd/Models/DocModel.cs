@@ -2,23 +2,23 @@
 {
     public class DocModel
     {
-        public int ID {  get; private set; }
+        public int ID {  get; set; }
 
-        public string docName { get; private set; }
+        public string docName { get; set; }
 
-        public Byte[] docImage { get; private set; }
+        public string docImage { get; set; }
 
-        public int userID { get; private set; }
+        public int userID { get; set; }
 
         public DocModel()
         {
             ID = 0;
             docName = "";
-            docImage = new Byte[0];
+            docImage = "";
             userID = 0;
         }
 
-        public DocModel(int ID, string docName, byte[] docImage, int userID)
+        public DocModel(int ID, string docName, string docImage, int userID)
         {
             this.ID = ID;
             this.docName = docName;

@@ -15,10 +15,9 @@ namespace FireboxGo.DAOs
         public List<ItemModel> GetItems(int userID, int folderID)
         {
             List<ItemModel> items = new List<ItemModel>();
-            Dictionary<int, ItemModel> itemDictionary = new Dictionary<int, ItemModel>();
+            ItemModel newItem = new ItemModel();
 
-            string sqlStatement = "SELECT fireboxgo.items.ID, fireboxgo.items.ITEM_NAME, fireboxgo.items.PURCHASE_DATE, fireboxgo.items.PURCHASE_PRICE, fireboxgo.items.RETAIL_PRICE, fireboxgo.items.DESCRIPTION, fireboxgo.items.OWNERSHIP_AGE, fireboxgo.items.IMAGE, fireboxgo.tags.TAG_NAME FROM fireboxgo.items LEFT JOIN fireboxgo.item_taggings ON fireboxgo.items.ID = fireboxgo.item_taggings.items_ID LEFT JOIN fireboxgo.tags ON fireboxgo.item_taggings.tags_ID = fireboxgo.tags.ID WHERE fireboxgo.items.rooms_ID = @rooms_ID";
-
+            string sqlStatement = "SELECT fireboxgo.items.ID, fireboxgo.items.ITEM_NAME, fireboxgo.items.PURCHASE_DATE, fireboxgo.items.PURCHASE_PRICE, fireboxgo.items.RETAIL_PRICE, fireboxgo.items.DESCRIPTION, fireboxgo.items.OWNERSHIP_AGE, fireboxgo.items.IMAGE, GROUP_CONCAT(tags.TAG_NAME ORDER BY tags.TAG_NAME SEPARATOR ', ') AS Tags FROM fireboxgo.items LEFT JOIN fireboxgo.item_taggings ON items.ID = item_taggings.items_ID LEFT JOIN fireboxgo.tags ON item_taggings.tags_ID = tags.ID WHERE items.accounts_ID = @accounts_ID AND items.rooms_ID = @rooms_ID GROUP BY items.ID, items.ITEM_NAME, items.PURCHASE_DATE, items.PURCHASE_PRICE, items.RETAIL_PRICE, items.DESCRIPTION, items.OWNERSHIP_AGE, items.IMAGE, items.rooms_ID ORDER BY ITEM_NAME ASC";
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -28,45 +27,61 @@ namespace FireboxGo.DAOs
 
                     // Perform function and add parameters
                     MySqlCommand command = new MySqlCommand(sqlStatement, connection);
+                    command.Parameters.AddWithValue("@accounts_ID", userID);
                     command.Parameters.AddWithValue("@rooms_ID", folderID);
                     MySqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            int itemID = reader.GetInt32("ID");
-                            string itemName = reader.GetString("ITEM_NAME");
-                            DateOnly purchaseDate = DateOnly.FromDateTime(reader.GetDateTime("PURCHASE_DATE"));
-                            decimal purchasePrice = reader.GetDecimal("PURCHASE_PRICE");
-                            decimal retailPrice = reader.GetDecimal("RETAIL_PRICE");
-                            string description = reader.GetString("DESCRIPTION");
-                            int ownershipAge = reader.GetInt32("OWNERSHIP_AGE");
-                            byte[] itemImage = reader["IMAGE"] as byte[];
-                            string tagName = reader.IsDBNull(reader.GetOrdinal("TAG_NAME")) ? null : reader.GetString("TAG_NAME");
+                            List<string> tags = new List<string>();
+                            byte[] itemData = new byte[0];
+                            string itemImage = "";
+                            string tagsString = reader.IsDBNull(8) ? string.Empty : reader.GetString(8);
 
-                            // Tie retrieved tags to their given item by itemID
-                            if (!itemDictionary.ContainsKey(itemID))
+                            if (!reader.IsDBNull(7))
                             {
-                                itemDictionary[itemID] = new ItemModel
+                                // Handle the image bytes
+                                long byteCount = reader.GetBytes(7, 0, null, 0, 0);
+                                if (byteCount > 0)
                                 {
-                                    ID = itemID,
-                                    itemName = itemName,
-                                    purchaseDate = purchaseDate,
-                                    purchasePrice = purchasePrice,
-                                    retailPrice = retailPrice,
-                                    description = description,
-                                    ownershipAge = ownershipAge,
-                                    itemTags = new List<string>(),
-                                    itemImage = itemImage,
-                                    folderID = folderID,
-                                    userID = userID
-                                };
+                                    itemData = new byte[byteCount];
+                                    reader.GetBytes(7, 0, itemData, 0, (int)byteCount);
+                                    itemImage = Convert.ToBase64String(itemData);
+                                }
+                                else
+                                {
+                                    itemData = new byte[0];
+                                }
                             }
 
-                            if (tagName != null)
+                            // Get the tags and store them in a list for the item model
+                            string[] tagsArray = tagsString.Split(',');
+                            foreach (var tag in tagsArray)
                             {
-                                itemDictionary[itemID].itemTags.Add(tagName);
+                                string trimmedTag = tag.Trim();
+                                if (!string.IsNullOrEmpty(trimmedTag))
+                                {
+                                    tags.Add(trimmedTag);
+                                }
                             }
+
+                            // Add item to results
+                            items.Add(
+                                newItem = new ItemModel(
+                                    reader.GetInt32(0),
+                                    reader.GetString(1),
+                                    DateOnly.FromDateTime(reader.GetDateTime(2)),
+                                    reader.GetDecimal(3),
+                                    reader.GetDecimal(4),
+                                    reader.GetString(5),
+                                    reader.GetInt32(6),
+                                    tags,
+                                    itemImage,
+                                    folderID,
+                                    userID
+                                )
+                            );
                         }
                     }
                     reader.Close();
@@ -77,7 +92,6 @@ namespace FireboxGo.DAOs
                     Console.WriteLine(ex.Message);
                 }
             }
-            items.AddRange(itemDictionary.Values);
             return items;
         }
 
@@ -87,6 +101,10 @@ namespace FireboxGo.DAOs
             bool status = false;
             List<int> tagIDs = new List<int>();
             long newItemID = 0;
+
+            byte[] imageBytes = Convert.FromBase64String(item.itemImage);
+
+            string sqlPacketStatement = "SET GLOBAL max_allowed_packet = 1073741824;";
 
             string sqlInsertStatement = "INSERT INTO fireboxgo.items (ITEM_NAME, PURCHASE_DATE, PURCHASE_PRICE, RETAIL_PRICE, DESCRIPTION, OWNERSHIP_AGE, IMAGE, rooms_ID, accounts_ID) VALUES (@ITEM_NAME, @PURCHASE_DATE, @PURCHASE_PRICE, @RETAIL_PRICE, @DESCRIPTION, @OWNERSHIP_AGE, @IMAGE, @rooms_ID, @accounts_ID)";
 
@@ -100,6 +118,10 @@ namespace FireboxGo.DAOs
                 {
                     connection.Open();
 
+                    // Allow for max 10GB files
+                    MySqlCommand packetIncrease = new MySqlCommand(sqlPacketStatement, connection);
+                    packetIncrease.ExecuteNonQuery();
+
                     // Perform function and add parameters for the items table
                     MySqlCommand commandInsert = new MySqlCommand(sqlInsertStatement, connection);
                     commandInsert.Parameters.AddWithValue("@ITEM_NAME", item.itemName);
@@ -108,7 +130,7 @@ namespace FireboxGo.DAOs
                     commandInsert.Parameters.AddWithValue("@RETAIL_PRICE", item.retailPrice);
                     commandInsert.Parameters.AddWithValue("@DESCRIPTION", item.description);
                     commandInsert.Parameters.AddWithValue("@OWNERSHIP_AGE", item.ownershipAge);
-                    commandInsert.Parameters.AddWithValue("@IMAGE", item.itemImage);
+                    commandInsert.Parameters.AddWithValue("@IMAGE", imageBytes);
                     commandInsert.Parameters.AddWithValue("@rooms_ID", item.folderID);
                     commandInsert.Parameters.AddWithValue("@accounts_ID", userID);
                     commandInsert.ExecuteNonQuery();
@@ -163,6 +185,10 @@ namespace FireboxGo.DAOs
             List<int> tagsToRemove = new List<int>();
             List<int> tagsToAdd = new List<int>();
 
+            byte[] imageBytes = Convert.FromBase64String(item.itemImage);
+
+            string sqlPacketStatement = "SET GLOBAL max_allowed_packet = 1073741824;";
+
             string sqlUpdateStatement = "UPDATE fireboxgo.items SET ITEM_NAME = @ITEM_NAME, PURCHASE_DATE = @PURCHASE_DATE, PURCHASE_PRICE = @PURCHASE_PRICE, RETAIL_PRICE = @RETAIL_PRICE, DESCRIPTION = @DESCRIPTION, OWNERSHIP_AGE = @OWNERSHIP_AGE, IMAGE = @IMAGE, rooms_ID = @rooms_ID WHERE ID = @ID";
 
             string sqlTagStatement = "SELECT ID FROM fireboxgo.tags WHERE TAG_NAME = @TAG_NAME";
@@ -179,6 +205,10 @@ namespace FireboxGo.DAOs
                 {
                     connection.Open();
 
+                    // Allow for max 10GB files
+                    MySqlCommand packetIncrease = new MySqlCommand(sqlPacketStatement, connection);
+                    packetIncrease.ExecuteNonQuery();
+
                     // Perform function and add parameters for the items table
                     MySqlCommand commandUpdate = new MySqlCommand(sqlUpdateStatement, connection);
                     commandUpdate.Parameters.AddWithValue("@ITEM_NAME", item.itemName);
@@ -187,7 +217,7 @@ namespace FireboxGo.DAOs
                     commandUpdate.Parameters.AddWithValue("@RETAIL_PRICE", item.retailPrice);
                     commandUpdate.Parameters.AddWithValue("@DESCRIPTION", item.description);
                     commandUpdate.Parameters.AddWithValue("@OWNERSHIP_AGE", item.ownershipAge);
-                    commandUpdate.Parameters.AddWithValue("@IMAGE", item.itemImage);
+                    commandUpdate.Parameters.AddWithValue("@IMAGE", imageBytes);
                     commandUpdate.Parameters.AddWithValue("@rooms_ID", item.folderID);
                     commandUpdate.Parameters.AddWithValue("@ID", itemID);
                     commandUpdate.ExecuteNonQuery();
@@ -289,6 +319,7 @@ namespace FireboxGo.DAOs
                     commandItem.ExecuteNonQuery();
 
                     status = true;
+                    connection.Close();
                 }
                 catch (Exception ex)
                 {

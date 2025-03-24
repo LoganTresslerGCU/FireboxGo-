@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TextInput, View, StyleSheet, Text, Button, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Checkbox } from 'react-native-paper';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import BannerNav from '../components/BannerNav';
 
 export default function CreateItemScreen() {
@@ -17,30 +19,30 @@ export default function CreateItemScreen() {
     const [description, setDescription] = useState('');
     const [ownershipAge, setOwnershipAge] = useState('');
     const [itemTags, setItemTags] = useState([]);
-    const [itemImage, setItemImage] = useState('');
-
+    const [itemImage, setItemImage] = useState(null);
+    const [imageSelected, setImageSelected] = useState('No Image Selected');
     const [availableFolders, setAvailableFolders] = useState([]);
     const [availableTags, setAvailableTags] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState(null);
 
-    const [errorMessage, setErrorMessage] = useState({ response: '', tags: '', folders: '' });
+    const [errorMessage, setErrorMessage] = useState({ response: '', image: '', tags: '', folders: '' });
 
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/tags', {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/tags', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                if (!response.ok || availableTags.length < 1) {
-                    setErrorMessage({ response: '', tags: 'Failed to retrieve tags. Reload and try again.', folders: '' });
+                if (!response.ok) {
+                    setErrorMessage({ response: '', image: '', tags: 'Failed to retrieve tags. Reload and try again.', folders: '' });
                 }
 
                 const tagData = await response.json();
                 setAvailableTags(tagData);
             } catch (error) {
-                setErrorMessage({ response: 'Server Error.', tags: '', folders: '' });
+                setErrorMessage({ response: 'Server Error.', image: '', tags: '', folders: '' });
             }
         };
         fetchTags();
@@ -49,22 +51,19 @@ export default function CreateItemScreen() {
     useEffect(() => {
         const fetchFolders = async () => {
             try {
-                const response = await fetch('http://192.168.1.28:5189/api/folder/home/' + userID, {
+                const response = await fetch('http://172.24.44.3:5189/api/folder/home/' + userID, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
                 if (!response.ok) {
-                    setErrorMessage({ response: '', tags: '', folders: 'Failed to retrieve your folders. Reload and try again.' });
-                }
-                else if(availableFolders.length < 1){
-                    setErrorMessage({ response: '', tags: '', folders: 'No folders found. Please make a folder first.' });
+                    setErrorMessage({ response: '', image: '', tags: '', folders: 'Failed to retrieve your folders. Reload and try again.' });
                 }
 
                 const folderData = await response.json();
                 setAvailableFolders(folderData);
             } catch (error) {
-                setErrorMessage({ response: 'Server Error', tags: '', folders: '' });
+                setErrorMessage({ response: 'Server Error', image: '', tags: '', folders: '' });
             }
         };
         fetchFolders();
@@ -92,13 +91,35 @@ export default function CreateItemScreen() {
         setPurchaseDate(formatted);
     };
 
+    const pickFile = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: "image/*"
+            });
+
+            if (result && result.assets && result.assets.length > 0) {
+                const uri = result.assets[0].uri;
+
+                const base64 = await FileSystem.readAsStringAsync(uri, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+                setImageSelected('Image Is Selected');
+                setItemImage(base64);
+            } else {
+                setErrorMessage({ response: '', image: 'Error Picking Image', tags: '', folders: '' });
+            }
+        } catch (err) {
+            setErrorMessage({ response: '', image: 'Unknown Error', tags: '', folders: '' });
+        }
+    };
+
     const handleSubmit = () => {
         handleCreate();
     }
 
     const handleCreate = async () => {
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/item/createItem/' + userID, {
+            const response = await fetch('http://172.24.44.3:5189/api/item/createItem/' + userID, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -121,10 +142,10 @@ export default function CreateItemScreen() {
                 navigation.navigate('Home', { userID: apiResponse })
             }
             else {
-                setErrorMessage({ response: 'Failed to create item. Reload and try again.', tags: '', folders: '' });
+                setErrorMessage({ response: 'Failed to create item. Reload and try again.', image: '', tags: '', folders: '' });
             }
         } catch (error) {
-            setErrorMessage({ response: 'Server Error.', tags: '', folders: '' });
+            setErrorMessage({ response: 'Server Error.', image: '', tags: '', folders: '' });
         }
     }
 
@@ -132,7 +153,7 @@ export default function CreateItemScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <BannerNav />
+                    <BannerNav passedData={userID}/>
                     <Text style={styles.title}>Create an Item</Text>
 
                     <Text style={styles.label}>Item Name</Text>
@@ -143,9 +164,9 @@ export default function CreateItemScreen() {
                         onChangeText={setItemName}
                     />
 
-                    <Text>Purchase Date (YYYY-MM-DD)</Text>
+                    <Text style={styles.label}>Purchase Date (YYYY-MM-DD)</Text>
                     <TextInput
-                        style={styles.calendar}
+                        style={styles.field}
                         placeholder="YYYY-MM-DD"
                         value={purchaseDate}
                         onChangeText={handlePurchaseDateChange}
@@ -188,6 +209,10 @@ export default function CreateItemScreen() {
                         onChangeText={setOwnershipAge}
                     />
 
+                    <Button title="Add Image" onPress={pickFile}/>
+                    <Text>{imageSelected}</Text>
+                    {errorMessage.image ? <Text style={{ color: 'red' }}>{errorMessage.image}</Text> : null}
+
                     <Text style={styles.label}>Add Tags</Text>
                     {errorMessage.tags ? <Text style={{ color: 'red' }}>{errorMessage.tags}</Text> : null}
                     {availableTags.map((tag, index) => (
@@ -224,13 +249,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20
+        marginBottom: 50
     },
     scrollContainer: {
         flexGrow: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     field: {
         width: '100%',
@@ -283,9 +307,9 @@ const styles = StyleSheet.create({
     radioText: {
         fontSize: 16
     },
-    calendar: {
-        borderWidth: 1,
-        padding: 8,
-        marginBottom: 10
+    image: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "contain",
     },
 });

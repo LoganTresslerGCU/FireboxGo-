@@ -45,7 +45,7 @@ export default function LoginScreen() {
         setErrorMessage({ username: '', password: '' });
 
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/user/login', {
+            const response = await fetch('http://172.24.44.3:5189/api/user/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, password: password }),
@@ -77,7 +77,7 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <Image source={require('@/assets/images/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
+                    <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
 
                     <Text style={{ fontWeight: 'bold' }}>Username</Text>
                     <TextInput

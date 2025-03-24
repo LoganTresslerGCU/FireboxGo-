@@ -58,7 +58,7 @@ export default function RegisterScreen() {
         setErrorMessage({ email: '', username: '', password: '', confirm: ''});
 
         try {
-            const response = await fetch('http://192.168.1.28:5189/api/user/register', {
+            const response = await fetch('http://172.24.44.3:5189/api/user/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstName: firstName, lastName: lastName, email: email, username: username, password: password }),
@@ -94,7 +94,7 @@ export default function RegisterScreen() {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
-                    <Image source={require('@/assets/images/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
+                    <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
 
                     <Text style={{ fontWeight: 'bold' }}>First Name</Text>
                     <TextInput
