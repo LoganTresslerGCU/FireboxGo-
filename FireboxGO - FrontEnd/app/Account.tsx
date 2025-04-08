@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BannerNav from '../components/BannerNav';
 
@@ -62,9 +62,8 @@ export default function AccountScreen() {
     }, [userID]);
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.main}>
             <BannerNav passedData={userID}/>
-            <Button title="Files" onPress={() => navigation.navigate('Files', { userID: userID })} />
 
             <Text style={styles.greeting}> Hello, <Text style={styles.name}>{account.firstName}</Text>!</Text>
 
@@ -74,7 +73,7 @@ export default function AccountScreen() {
                 <Text style={styles.infoText}>• Email: <Text style={styles.value}>{account.email}</Text></Text>
                 <Text style={styles.infoText}>• Username: <Text style={styles.value}>{account.username}</Text></Text>
             </View>
-            {errorMessage.data ? <Text style={{ color: 'red' }}>{errorMessage.data}</Text> : null}
+            {errorMessage.data ? <Text style={styles.error}>{errorMessage.data}</Text> : null}
 
             <Text style={styles.sectionTitle}> Household Totals:</Text>
             <View style={styles.infoContainer}>
@@ -82,12 +81,21 @@ export default function AccountScreen() {
                     <Text style={styles.infoText} key={index}>• {labels[index]}: <Text style={styles.value}>{value}</Text></Text>
                 ))}
             </View>
-            {errorMessage.totals ? <Text style={{ color: 'red' }}>{errorMessage.totals}</Text> : null}
+            {errorMessage.totals ? <Text style={styles.error}>{errorMessage.totals}</Text> : null}
+
+            <View style={styles.fileBtn}>
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Files', { userID: userID })}>
+                    <Text style={styles.buttonText}>Files</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    main: {
+        flex: 1
+    },
     greeting: {
         fontSize: 24,
         fontWeight: "bold",
@@ -115,6 +123,24 @@ const styles = StyleSheet.create({
         color: '#fbb040'
     },
     buttonWrapper: {
-        marginLeft: 10,
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
     },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10
+    },
+    fileBtn: {
+        alignItems: 'center'
+    }
 });

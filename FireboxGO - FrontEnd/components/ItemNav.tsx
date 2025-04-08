@@ -10,7 +10,9 @@ export default function ItemNav({ query, setQuery, tagSearch, setTagSearch }) {
 
     return (
         <View style={styles.banner}>
-            <Button title="+" onPress={() => navigation.navigate('Create Item', { userID: userID })} />
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Create Item', { userID: userID })}>
+                <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
             <TextInput
                 style={styles.field}
                 placeholder="Search Items"
@@ -64,8 +66,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#B2B6B8'
     },
     field: {
-        width: '45%',
+        width: '50%',
+        padding: 10,
         marginVertical: 5,
         borderWidth: 1,
+        borderRadius: 5
+    },
+    buttonWrapper: {
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 2,
+        marginRight: 10,
+    },
+    buttonText: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: 'bold',
     }
 });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, Button } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function LandingScreen() {
@@ -10,8 +10,13 @@ export default function LandingScreen() {
             <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
             <Text style={styles.titleFBG}>FireboxGO!</Text>
 
-            <Button title="Login" onPress={() => navigation.navigate('Login')} />
-            <Button title="Register" onPress={() => navigation.navigate('Register')} />
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -29,6 +34,21 @@ const styles = StyleSheet.create({
     titleFBG: {
         fontSize: 32,
         fontWeight: 'bold',
-        fontStyle: 'italic'
+        fontStyle: 'italic',
+        marginBottom: 25
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
     }
 });

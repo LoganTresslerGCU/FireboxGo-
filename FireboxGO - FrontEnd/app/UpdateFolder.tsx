@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, View, StyleSheet, Text, Button, Image, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
+import { TextInput, View, StyleSheet, Text, Modal, Image, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Checkbox } from 'react-native-paper';
 import BannerNav from '../components/BannerNav';
@@ -17,6 +17,9 @@ export default function UpdateFolderScreen() {
     const [availableTags, setAvailableTags] = useState([]);
 
     const [errorMessage, setErrorMessage] = useState({ response: '', tags: '' });
+
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const toggleDropdown = () => setDropdownVisible(prev => !prev);
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -78,39 +81,67 @@ export default function UpdateFolderScreen() {
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <BannerNav passedData={userID}/>
-                    <Text>Edit Your Room Folder</Text>
+                    <Text style={styles.mainTitle}>Edit Your Room Folder</Text>
 
-                    <Text>Room Name</Text>
+                    <Text style={styles.title}>Room Name</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder={folderName}
                         value={folderName}
                         onChangeText={setFolderName}
                     />
 
-                    <Text>Description</Text>
+                    <Text style={styles.title}>Description</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder={description}
                         value={description}
                         onChangeText={setDescription}
-                        multiline
                     />
 
-                    <Text>Add Tags</Text>
-                    {errorMessage.tags ? <Text style={{ color: 'red' }}>{errorMessage.tags}</Text> : null}
-                    {availableTags.map((tag, index) => (
-                        <View key={index} style={styles.checkboxContainer}>
-                            <Checkbox
-                                status={folderTags.includes(tag) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleTag(tag)}
-                            />
-                            <Text>{tag}</Text>
-                        </View>
-                    ))}
+                    <View style={styles.dropContainer}>
+                        <TouchableOpacity onPress={toggleDropdown} style={styles.buttonWrapper}>
+                            <Text style={styles.buttonText}>Add Tags</Text>
+                        </TouchableOpacity>
 
-                    <Button title="Update!" onPress={handleSubmit} />
-                    {errorMessage.response ? <Text style={{ color: 'red' }}>{errorMessage.response}</Text> : null}
+                        <Modal
+                            visible={dropdownVisible}
+                            transparent
+                            animationType="fade"
+                            onRequestClose={() => setDropdownVisible(false)}
+                        >
+                            <View style={styles.modalBackground}>
+                                <TouchableOpacity
+                                    style={styles.absoluteFill}
+                                    activeOpacity={1}
+                                />
+
+                                <View style={styles.dropdown}>
+                                    <ScrollView style={styles.dropdownScroll}>
+                                        {availableTags.map((tag, index) => (
+                                            <View key={index} style={styles.checkboxContainer}>
+                                                <Checkbox
+                                                    status={folderTags.includes(tag) ? 'checked' : 'unchecked'}
+                                                    onPress={() => toggleTag(tag)}
+                                                />
+                                                <Text>{tag}</Text>
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                    <TouchableOpacity style={styles.buttonWrapper} onPress={() => setDropdownVisible(false)}>
+                                        <Text style={styles.buttonText}>Done</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+
+                    <TouchableOpacity style={styles.buttonWrapper} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>Update!</Text>
+                    </TouchableOpacity>
+                    {errorMessage.response ? <Text style={styles.error}>{errorMessage.response}</Text> : null}
                 </View>
             </TouchableWithoutFeedback>
         </ScrollView>
@@ -121,26 +152,44 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     scrollContainer: {
-        flexGrow: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
-    logoFBG: {
-        width: 150,
-        height: 150,
-        marginBottom: 20
+    mainTitle: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginVertical: 20
+    },
+    title: {
+        fontWeight: 'bold'
     },
     field: {
-        width: '100%',
-        padding: 10,
-        marginVertical: 10,
+        width: 200,
+        height: 50,
+        marginBottom: 10,
         borderWidth: 1,
         borderRadius: 5
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10
     },
     checkboxes: {
         flexDirection: 'row',
@@ -152,4 +201,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 5,
     },
+	dropContainer: {
+		alignItems: 'center',
+	},
+	modalBackground: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	dropdown: {
+		backgroundColor: '#fff',
+		width: 250,
+		maxHeight: 300,
+		borderRadius: 8,
+		padding: 10,
+		elevation: 4,
+		shadowColor: '#000',
+		shadowOpacity: 0.2,
+		shadowOffset: { width: 0, height: 2 },
+	},
+	dropdownScroll: {
+		width: '100%',
+	}
 });

@@ -72,7 +72,7 @@ export default function SearchScreen() {
     const paginatedData = results.slice(currentPage * resultsPerPage, (currentPage + 1) * resultsPerPage);
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.main}>
             <BannerNav passedData={userID}/>
             <View style={styles.searchbar}>
                 <Text>Search: </Text>
@@ -88,7 +88,11 @@ export default function SearchScreen() {
                     </View>
                     <Text>Tag Search</Text>
                 </TouchableOpacity>
-                <Button title='Go!' onPress={fetchQuery}/>
+
+                <TouchableOpacity style={styles.searchWrapper} onPress={fetchQuery}>
+                    <Text style={styles.buttonText}>Go!</Text>
+                </TouchableOpacity>
+
             </View>
             {results.length === 0 ? (
                 <Text>No matching results found.</Text>
@@ -101,18 +105,37 @@ export default function SearchScreen() {
                     contentContainerStyle={styles.container}
                 />
             )}
+
+            <View style={styles.pageNav}>
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 0))} disabled={currentPage === 0}>
+                    <Text style={styles.buttonText}>Prev</Text>
+                </TouchableOpacity>
+
+                <Text>Page {currentPage + 1} of {totalPages}</Text>
+
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))} disabled={currentPage >= totalPages - 1}>
+                    <Text style={styles.buttonText}>Next</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    main: {
+      flex: 1
+    },
     field: {
-        width: '45%',
-        marginVertical: 2,
+        width: 150,
+        height: 50,
         borderWidth: 1,
+        borderRadius: 5
     },
     searchbar: {
+        top: 10,
+        marginBottom: 10,
         flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     tagSearch: {
@@ -133,5 +156,33 @@ const styles = StyleSheet.create({
         width: 12,
         height: 12,
         backgroundColor: "#000",
+    },
+    searchWrapper: {
+        width: 50,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    pageNav: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10
     }
 });

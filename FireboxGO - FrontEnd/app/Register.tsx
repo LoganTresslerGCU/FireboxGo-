@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, View, StyleSheet, Text, Button, Image, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { TextInput, View, StyleSheet, Text, TouchableOpacity, Image, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function RegisterScreen() {
@@ -96,61 +96,70 @@ export default function RegisterScreen() {
                 <View style={styles.container}>
                     <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
 
-                    <Text style={{ fontWeight: 'bold' }}>First Name</Text>
+                    <Text style={styles.title}>First Name</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter First Name"
                         value={firstName}
                         onChangeText={setFirstName}
                     />
 
-                    <Text style={{ fontWeight: 'bold' }}>Last Name</Text>
+                    <Text style={styles.title}>Last Name</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Last Name"
                         value={lastName}
                         onChangeText={setLastName}
                     />
 
-                    <Text style={{ fontWeight: 'bold' }}>Email</Text>
+                    <Text style={styles.title}>Email</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Email"
                         value={email}
                         onChangeText={setEmail}
                     />
-                    {errorMessage.email ? <Text style={{ color: 'red' }}>{errorMessage.email}</Text> : null}
+                    {errorMessage.email ? <Text style={styles.error}>{errorMessage.email}</Text> : null}
 
-                    <Text style={{ fontWeight: 'bold' }}>Username</Text>
+                    <Text style={styles.title}>Username</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Username"
                         value={username}
                         onChangeText={setUsername}
                     />
-                    {errorMessage.username ? <Text style={{ color: 'red' }}>{errorMessage.username}</Text> : null}
+                    {errorMessage.username ? <Text style={styles.error}>{errorMessage.username}</Text> : null}
 
-                    <Text style={{ fontWeight: 'bold' }}>Password</Text>
+                    <Text style={styles.title}>Password</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Password"
                         value={password}
                         secureTextEntry
                         onChangeText={setPassword}
                     />
-                    {errorMessage.password ? <Text style={{ color: 'red' }}>{errorMessage.password}</Text> : null}
+                    {errorMessage.password ? <Text style={styles.error}>{errorMessage.password}</Text> : null}
 
-                    <Text style={{ fontWeight: 'bold' }}>Confirm Password</Text>
+                    <Text style={styles.title}>Confirm Password</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Confirm Password"
                         value={confirm}
                         secureTextEntry
                         onChangeText={setConfirm}
                     />
-                    {errorMessage.confirm ? <Text style={{ color: 'red' }}>{errorMessage.confirm}</Text> : null}
+                    {errorMessage.confirm ? <Text style={styles.error}>{errorMessage.confirm}</Text> : null}
 
-                    <Button title="Submit" onPress={handleSubmit} />
+
+                    <TouchableOpacity style={styles.buttonWrapper} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>Register!</Text>
+                    </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>
         </ScrollView>
@@ -161,25 +170,43 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     scrollContainer: {
         flexGrow: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     logoFBG: {
-        width: 150,
-        height: 150,
-        marginBottom: 20
+        width: 125,
+        height: 125
+    },
+    title: {
+        fontWeight: 'bold'
     },
     field: {
-        width: '100%',
-        padding: 10,
-        marginVertical: 10,
+        width: 200,
+        height: 50,
+        marginBottom: 10,
         borderWidth: 1,
         borderRadius: 5
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10
     }
 });

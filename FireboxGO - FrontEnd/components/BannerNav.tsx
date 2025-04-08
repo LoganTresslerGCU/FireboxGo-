@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 
 export default function BannerNav() {
@@ -10,20 +10,21 @@ export default function BannerNav() {
 
     return (
         <View style={styles.banner}>
-            <Image source={require('../assets/Logo.png')} style={styles.logo} />
+            <TouchableOpacity onPress={() => navigation.navigate('Home', { userID: userID })}>
+                <Image source={require('../assets/Logo.png')} style={styles.logo} />
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('Search', { userID: userID })}>
                 <Image source={require('../assets/Search.png')} style={styles.search} />
             </TouchableOpacity>
 
-            <View style={styles.buttonContainer}>
-                <View style={styles.buttonWrapper}>
-                    <Button title="Details" onPress={() => navigation.navigate('Account', { userID: userID })} />
-                </View>
-                <View style={styles.buttonWrapper}>
-                    <Button title="Logout" onPress={() => navigation.navigate('Welcome')} />
-                </View>
-            </View>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Account', { userID: userID })}>
+                <Text style={styles.buttonText}>Account</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Welcome')}>
+                <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -31,9 +32,7 @@ export default function BannerNav() {
 const styles = StyleSheet.create({
     banner: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
         height: 60,
         borderTopWidth: 2,
         borderBottomWidth: 2,
@@ -44,12 +43,22 @@ const styles = StyleSheet.create({
         width: 100,
         height: 40,
         resizeMode: 'contain',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
+        marginLeft: 10,
+        marginRight: 50
     },
     buttonWrapper: {
-        marginLeft: 10,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 2,
+        marginRight: 10,
+    },
+    buttonText: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     search: {
         height: 50,

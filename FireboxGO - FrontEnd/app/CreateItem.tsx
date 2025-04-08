@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, View, StyleSheet, Text, Button, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
+import { TextInput, View, StyleSheet, Text, Modal, Button, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Keyboard } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Checkbox } from 'react-native-paper';
 import * as DocumentPicker from 'expo-document-picker';
@@ -26,6 +26,12 @@ export default function CreateItemScreen() {
     const [selectedFolder, setSelectedFolder] = useState(null);
 
     const [errorMessage, setErrorMessage] = useState({ response: '', image: '', tags: '', folders: '' });
+
+    const [tagDropdownVisible, setTagDropdownVisible] = useState(false);
+    const toggleTagDropdown = () => setTagDropdownVisible(prev => !prev);
+
+    const [folderDropdownVisible, setFolderDropdownVisible] = useState(false);
+    const toggleFolderDropdown = () => setFolderDropdownVisible(prev => !prev);
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -154,17 +160,18 @@ export default function CreateItemScreen() {
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <BannerNav passedData={userID}/>
-                    <Text style={styles.title}>Create an Item</Text>
+                    <Text style={styles.mainTitle}>Create an Item</Text>
 
-                    <Text style={styles.label}>Item Name</Text>
+                    <Text style={styles.title}>Item Name</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter item name"
                         value={itemName}
                         onChangeText={setItemName}
                     />
 
-                    <Text style={styles.label}>Purchase Date (YYYY-MM-DD)</Text>
+                    <Text style={styles.title}>Purchase Date (YYYY-MM-DD)</Text>
                     <TextInput
                         style={styles.field}
                         placeholder="YYYY-MM-DD"
@@ -173,7 +180,7 @@ export default function CreateItemScreen() {
                         keyboardType="numeric"
                     />
 
-                    <Text style={styles.label}>Purchase Price</Text>
+                    <Text style={styles.title}>Purchase Price</Text>
                     <TextInput
                         style={styles.field}
                         placeholder="Enter purchase price"
@@ -182,7 +189,7 @@ export default function CreateItemScreen() {
                         onChangeText={setPurchasePrice}
                     />
 
-                    <Text style={styles.label}>Retail Price</Text>
+                    <Text style={styles.title}>Retail Price</Text>
                     <TextInput
                         style={styles.field}
                         placeholder="Enter retail price"
@@ -191,16 +198,16 @@ export default function CreateItemScreen() {
                         onChangeText={setRetailPrice}
                     />
 
-                    <Text style={styles.label}>Description</Text>
+                    <Text style={styles.title}>Description</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter description"
                         value={description}
                         onChangeText={setDescription}
-                        multiline
                     />
 
-                    <Text style={styles.label}>Ownership Age</Text>
+                    <Text style={styles.title}>Ownership Age</Text>
                     <TextInput
                         style={styles.field}
                         placeholder="Enter ownership age (years)"
@@ -209,35 +216,90 @@ export default function CreateItemScreen() {
                         onChangeText={setOwnershipAge}
                     />
 
-                    <Button title="Add Image" onPress={pickFile}/>
+                    <TouchableOpacity onPress={pickFile} style={styles.buttonWrapper}>
+                        <Text style={styles.buttonText}>Add Image</Text>
+                    </TouchableOpacity>
                     <Text>{imageSelected}</Text>
-                    {errorMessage.image ? <Text style={{ color: 'red' }}>{errorMessage.image}</Text> : null}
+                    {errorMessage.image ? <Text style={styles.error}>{errorMessage.image}</Text> : null}
 
-                    <Text style={styles.label}>Add Tags</Text>
-                    {errorMessage.tags ? <Text style={{ color: 'red' }}>{errorMessage.tags}</Text> : null}
-                    {availableTags.map((tag, index) => (
-                        <View key={index} style={styles.checkboxContainer}>
-                            <Checkbox
-                                status={itemTags.includes(tag) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleTag(tag)}
-                            />
-                            <Text>{tag}</Text>
-                        </View>
-                    ))}
-
-                    <Text style={styles.label}>Select a Folder</Text>
-                    {errorMessage.folders ? <Text style={{ color: 'red' }}>{errorMessage.folders}</Text> : null}
-                    {availableFolders.map((folder) => (
-                        <TouchableOpacity key={folder.id} style={styles.radioContainer} onPress={() => toggleFolder(folder)}>
-                            <View style={styles.radioCircle}>
-                                {selectedFolder?.id === folder.id && <View style={styles.radioSelected} />}
-                            </View>
-                            <Text style={styles.radioText}>{folder.folderName}</Text>
+                    <View style={styles.dropContainer}>
+                        <TouchableOpacity onPress={toggleTagDropdown} style={styles.buttonWrapper}>
+                            <Text style={styles.buttonText}>Add Tags</Text>
                         </TouchableOpacity>
-                    ))}
 
-                    <Button title="Create!" onPress={handleSubmit} />
-                    {errorMessage.response ? <Text style={{ color: 'red' }}>{errorMessage.response}</Text> : null}
+                        <Modal
+                            visible={tagDropdownVisible}
+                            transparent
+                            animationType="fade"
+                            onRequestClose={() => setTagDropdownVisible(false)}
+                        >
+                            <View style={styles.modalBackground}>
+                                <TouchableOpacity
+                                    style={styles.absoluteFill}
+                                    activeOpacity={1}
+                                />
+
+                                <View style={styles.dropdown}>
+                                    <ScrollView style={styles.dropdownScroll}>
+                                        {availableTags.map((tag, index) => (
+                                            <View key={index} style={styles.checkboxContainer}>
+                                                <Checkbox
+                                                    status={itemTags.includes(tag) ? 'checked' : 'unchecked'}
+                                                    onPress={() => toggleTag(tag)}
+                                                />
+                                                <Text>{tag}</Text>
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                    <TouchableOpacity style={styles.buttonWrapper} onPress={() => setTagDropdownVisible(false)}>
+                                        <Text style={styles.buttonText}>Done</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+
+                    <View style={styles.dropContainer}>
+                        <TouchableOpacity onPress={toggleFolderDropdown} style={styles.buttonWrapper}>
+                            <Text style={styles.buttonText}>Select Folder</Text>
+                        </TouchableOpacity>
+
+                        <Modal
+                            visible={folderDropdownVisible}
+                            transparent
+                            animationType="fade"
+                            onRequestClose={() => setFolderDropdownVisible(false)}
+                        >
+                            <View style={styles.modalBackground}>
+                                <TouchableOpacity
+                                    style={styles.absoluteFill}
+                                    activeOpacity={1}
+                                />
+
+                                <View style={styles.dropdown}>
+                                    <ScrollView style={styles.dropdownScroll}>
+                                        {availableFolders.map((folder) => (
+                                            <TouchableOpacity key={folder.id} style={styles.radioContainer} onPress={() => toggleFolder(folder)}>
+                                                <View style={styles.radioCircle}>
+                                                    {selectedFolder?.id === folder.id && <View style={styles.radioSelected} />}
+                                                </View>
+                                                <Text style={styles.radioText}>{folder.folderName}</Text>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </ScrollView>
+                                    <TouchableOpacity style={styles.buttonWrapper} onPress={() => setFolderDropdownVisible(false)}>
+                                        <Text style={styles.buttonText}>Done</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+
+
+                    <TouchableOpacity onPress={handleSubmit} style={styles.buttonWrapper}>
+                        <Text style={styles.buttonText}>Create</Text>
+                    </TouchableOpacity>
+                    {errorMessage.response ? <Text style={styles.error}>{errorMessage.response}</Text> : null}
                 </View>
             </TouchableWithoutFeedback>
         </ScrollView>
@@ -248,20 +310,44 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 50
+        alignItems: 'center'
     },
     scrollContainer: {
-        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
+    mainTitle: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginVertical: 20
+    },
+    title: {
+        fontWeight: 'bold'
+    },
     field: {
-        width: '100%',
-        padding: 10,
-        marginVertical: 10,
+        width: 200,
+        height: 50,
+        marginBottom: 10,
         borderWidth: 1,
         borderRadius: 5
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10
     },
     checkboxes: {
         flexDirection: 'row',
@@ -273,16 +359,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 5,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginTop: 10
-    },
+	dropContainer: {
+		alignItems: 'center',
+	},
+	modalBackground: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	dropdown: {
+		backgroundColor: '#fff',
+		width: 250,
+		maxHeight: 300,
+		borderRadius: 8,
+		padding: 10,
+		elevation: 4,
+		shadowColor: '#000',
+		shadowOpacity: 0.2,
+		shadowOffset: { width: 0, height: 2 },
+	},
+	dropdownScroll: {
+		width: '100%',
+	},
     radioContainer: {
         flexDirection: 'row',
         alignItems: 'center',

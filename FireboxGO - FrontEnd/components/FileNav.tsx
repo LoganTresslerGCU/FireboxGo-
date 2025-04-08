@@ -84,8 +84,13 @@ export default function ItemNav({ query, setQuery }) {
     }
     return (
         <View style={styles.banner}>
-            <Button title="+ Image" onPress={pickFile}/>
-            <Button title="+ PDF" onPress={pickDoc}/>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={pickFile}>
+                <Text style={styles.buttonText}>+Image</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonWrapper} onPress={pickDoc}>
+                <Text style={styles.buttonText}>+PDF</Text>
+            </TouchableOpacity>
+
             <TextInput
                 style={styles.field}
                 placeholder="Search Files"
@@ -108,8 +113,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#B2B6B8'
     },
     field: {
-        width: '45%',
+        width: '50%',
+        padding: 10,
         marginVertical: 5,
         borderWidth: 1,
+        borderRadius: 5
+    },
+    buttonWrapper: {
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 2,
+        marginRight: 10,
+    },
+    buttonText: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: 'bold',
     }
 });

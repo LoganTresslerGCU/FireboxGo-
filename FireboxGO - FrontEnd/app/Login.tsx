@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, View, StyleSheet, Text, Button, Image, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { TextInput, View, StyleSheet, Text, TouchableOpacity, Image, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function LoginScreen() {
@@ -79,27 +79,30 @@ export default function LoginScreen() {
                 <View style={styles.container}>
                     <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
 
-                    <Text style={{ fontWeight: 'bold' }}>Username</Text>
+                    <Text style={styles.title}>Username</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Username"
                         value={username}
                         onChangeText={setUsername}
                     />
-                    {errorMessage.username ? <Text style={{ color: 'red' }}>{errorMessage.username}</Text> : null}
+                    {errorMessage.username ? <Text style={styles.error}>{errorMessage.username}</Text> : null}
 
-                    <Text style={{ fontWeight: 'bold' }}>Password</Text>
+                    <Text style={styles.title}>Password</Text>
                     <TextInput
                         style={styles.field}
+                        multiline
                         placeholder="Enter Password"
                         value={password}
                         secureTextEntry
                         onChangeText={setPassword}
                     />
-                    {errorMessage.password ? <Text style={{ color: 'red' }}>{errorMessage.password}</Text> : null}
+                    {errorMessage.password ? <Text style={styles.error}>{errorMessage.password}</Text> : null}
 
-                    <Button title="Submit" onPress={handleSubmit} />
-                    <Button title="Forgot Password?" />
+                    <TouchableOpacity style={styles.buttonWrapper} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>Login!</Text>
+                    </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>
         </ScrollView>
@@ -110,25 +113,43 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     scrollContainer: {
         flexGrow: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     logoFBG: {
-        width: 150,
-        height: 150,
-        marginBottom: 20
+        width: 175,
+        height: 125
+    },
+    title: {
+        fontWeight: 'bold'
     },
     field: {
-        width: '100%',
-        padding: 10,
-        marginVertical: 10,
+        width: 200,
+        height: 50,
+        marginBottom: 10,
         borderWidth: 1,
         borderRadius: 5
+    },
+    buttonWrapper: {
+        width: 100,
+        backgroundColor: '#FBB040',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        margin: 5
+    },
+    buttonText: {
+        color: '#000000',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    error: {
+        color: 'red',
+        marginBottom: 10
     }
 });

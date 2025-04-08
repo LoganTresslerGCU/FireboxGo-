@@ -23,7 +23,7 @@ export default function OneItemScreen() {
     const navigation = useNavigation();
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.main}>
             <BannerNav passedData={userID}/>
             <ItemEditNav passedData={
                 id,
@@ -46,23 +46,23 @@ export default function OneItemScreen() {
                         <Image style={styles.image} source={{ uri: `data:image/png;base64,${itemImage}` }} />
                     )
                 ) : (
-                    <Text style={styles.title}>No Image</Text>
+                    <Text style={styles.name}>No Preview Available</Text>
                 )}
             </View>
-            <Text>{itemName}</Text>
-            <Text>{purchaseDate}</Text>
-            <Text>{purchasePrice}</Text>
-            <Text>{retailPrice}</Text>
-            <Text>{description}</Text>
-            <Text>Owned for {ownershipAge} years</Text>
-            <Text>{itemTags && itemTags.length > 0
-                ? itemTags.join(', ') : 'No Tags Available'}
-            </Text>
+            <Text style={styles.title}>{itemName}</Text>
+            <Text style={styles.infoText}>{description}</Text>
+            <Text style={styles.infoText}>• Purchased On: <Text style={styles.value}>{purchaseDate}</Text></Text>
+            <Text style={styles.infoText}>• Purchase Price: $<Text style={styles.value}>{purchasePrice}</Text></Text>
+            <Text style={styles.infoText}>• Retail Price: $<Text style={styles.value}>{retailPrice}</Text></Text>
+            <Text style={styles.infoText}>• Age: $<Text style={styles.value}>{ownershipAge}</Text></Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    main: {
+      flex: 1
+    },
     imageContainer: {
         width: 300,
         height: 300,
@@ -72,8 +72,28 @@ const styles = StyleSheet.create({
         margin: 10
     },
     image: {
-        width: "100%",
-        height: "100%",
+        width: 300,
+        height: 300,
         resizeMode: "contain",
-    }
+    },
+    name: {
+        color: '#fbb040',
+        padding: 10,
+        fontSize: 22
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginVertical: 5,
+        marginHorizontal: 10
+    },
+    infoText: {
+        fontSize: 16,
+        marginVertical: 5,
+        marginHorizontal: 10
+    },
+    value: {
+        fontWeight: 'bold',
+        color: '#fbb040'
+    },
 });

@@ -11,10 +11,10 @@ export default function OneFileScreen() {
     const navigation = useNavigation();
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.main}>
             <BannerNav passedData={userID}/>
             <FileEditNav passedData={ id, docName, docImage, userID }/>
-            <Text>{docName}</Text>
+            <Text style={styles.name}>{docName}</Text>
             <View style={styles.imageContainer}>
                 {docImage ? (
                     docImage.startsWith('data:image/jpeg') ? (
@@ -23,7 +23,7 @@ export default function OneFileScreen() {
                         <Image style={styles.image} source={{ uri: `data:image/png;base64,${docImage}` }} />
                     )
                 ) : (
-                    <Text style={styles.title}>No File</Text>
+                    <Text style={styles.name}>No Preview Available</Text>
                 )}
             </View>
         </View>
@@ -31,6 +31,9 @@ export default function OneFileScreen() {
 }
 
 const styles = StyleSheet.create({
+    main: {
+      flex: 1
+    },
     imageContainer: {
         width: 300,
         height: 300,
@@ -43,5 +46,10 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         resizeMode: "contain",
+    },
+    name: {
+        color: '#fbb040',
+        padding: 10,
+        fontSize: 22
     }
 });
