@@ -2,22 +2,17 @@ import React, { useState } from 'react';
 import { TextInput, View, StyleSheet, Text, TouchableOpacity, Image, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function RegisterScreen() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
+export default function ResetScreen() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
-    const [errorMessage, setErrorMessage] = useState({ email: '', username: '', password: '', confirm: ''});
+    const [errorMessage, setErrorMessage] = useState({username: '', password: '', confirm: ''});
 
     const navigation = useNavigation();
 
     const handleSubmit = () => {
-        let errors = { email: '', username: '', password: '', confirm: '' };
+        let errors = { username: '', password: '', confirm: '' };
         const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
-
-        if (!email.trim()) errors.email = 'Email is required';
 
         if (!username.trim()) {
             errors.username = 'Username is required';
@@ -47,42 +42,28 @@ export default function RegisterScreen() {
         }
 
         if(password == confirm) {
-            handleRegister();
+            handleReset();
         }
         else {
-            setErrorMessage({ email: '', username: '', password: '', confirm: 'These passwords do not match'});
+            setErrorMessage({ username: '', password: '', confirm: 'These passwords do not match'});
         }
     }
 
-    const handleRegister = async () => {
-        setErrorMessage({ email: '', username: '', password: '', confirm: ''});
+    const handleReset = async () => {
+        setErrorMessage({ username: '', password: '', confirm: ''});
 
         try {
-            const response = await fetch('http://172.24.44.3:5189/api/user/register', {
-                method: 'POST',
+            const response = await fetch('http://172.24.44.3:5189/api/user/updatePW', {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName: firstName, lastName: lastName, email: email, username: username, password: password }),
+                body: JSON.stringify({ username: username, password: password }),
             });
 
-            const responseText = await response.text();
-            const apiResponse = Number(responseText);
-
             if(response.ok) {
-                navigation.navigate('Home', { userID: apiResponse });
+                navigation.navigate('Login');
             }
             else {
-                if(apiResponse == -1) {
-                    setErrorMessage({ email: '', username: 'Username is already taken', password: '', confirm: ''});
-                }
-                else if(apiResponse == -2) {
-                    setErrorMessage({ email: 'Email is already in use', username: '', password: '', confirm: ''});
-                }
-                else if(apiResponse == -3) {
-                    setErrorMessage({ email: 'Email is already in use', username: 'Username is already taken', password: '', confirm: ''});
-                }
-                else if(apiResponse == -4) {
-                    setErrorMessage({ email: '', username: '', password: '', confirm: 'Server error'});
-                }
+                setErrorMessage({ username: '', password: '', confirm: 'Server error'});
             }
         } catch (error) {
             setErrorMessage({ email: '', username: '', password: '', confirm: 'Server error'});
@@ -95,34 +76,6 @@ export default function RegisterScreen() {
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <View style={styles.container}>
                     <Image source={require('../assets/Logo.png')} style={styles.logoFBG} resizeMode="contain"/>
-
-                    <Text style={styles.title}>First Name</Text>
-                    <TextInput
-                        style={styles.field}
-                        multiline
-                        placeholder="Enter First Name"
-                        value={firstName}
-                        onChangeText={setFirstName}
-                    />
-
-                    <Text style={styles.title}>Last Name</Text>
-                    <TextInput
-                        style={styles.field}
-                        multiline
-                        placeholder="Enter Last Name"
-                        value={lastName}
-                        onChangeText={setLastName}
-                    />
-
-                    <Text style={styles.title}>Email</Text>
-                    <TextInput
-                        style={styles.field}
-                        multiline
-                        placeholder="Enter Email"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                    {errorMessage.email ? <Text style={styles.error}>{errorMessage.email}</Text> : null}
 
                     <Text style={styles.title}>Username</Text>
                     <TextInput
@@ -156,7 +109,7 @@ export default function RegisterScreen() {
 
 
                     <TouchableOpacity style={styles.buttonWrapper} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Register!</Text>
+                        <Text style={styles.buttonText}>Update</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>

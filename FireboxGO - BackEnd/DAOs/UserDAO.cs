@@ -539,5 +539,41 @@ namespace FireboxGo.DAOs
             }
             return results;
         }
+
+        // Update function for passwords
+        public bool UpdatePW(UserModel user)
+        {
+            bool status = false;
+
+            string sqlUpdateStatement = "UPDATE fireboxgo.accounts SET PASSWORD = @PASSWORD WHERE USERNAME = @USERNAME";
+
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    // Perform function and add parameters for the folders table
+                    MySqlCommand commandUpdate = new MySqlCommand(sqlUpdateStatement, connection);
+                    commandUpdate.Parameters.AddWithValue("@PASSWORD", user.password);
+                    commandUpdate.Parameters.AddWithValue("@USERNAME", user.username);
+                    var result = commandUpdate.ExecuteNonQuery();
+
+                    if (result > 0)
+                    {
+                        // Successful status
+                        status = true;
+                        connection.Close();
+                        return status;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            return status;
+        }
     }
 }

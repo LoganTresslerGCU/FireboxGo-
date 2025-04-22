@@ -82,7 +82,6 @@ export default function LoginScreen() {
                     <Text style={styles.title}>Username</Text>
                     <TextInput
                         style={styles.field}
-                        multiline
                         placeholder="Enter Username"
                         value={username}
                         onChangeText={setUsername}
@@ -92,16 +91,19 @@ export default function LoginScreen() {
                     <Text style={styles.title}>Password</Text>
                     <TextInput
                         style={styles.field}
-                        multiline
                         placeholder="Enter Password"
                         value={password}
-                        secureTextEntry
+                        secureTextEntry={true}
                         onChangeText={setPassword}
                     />
                     {errorMessage.password ? <Text style={styles.error}>{errorMessage.password}</Text> : null}
 
                     <TouchableOpacity style={styles.buttonWrapper} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>Login!</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Code')}>
+                        <Text style={styles.buttonText}>Reset?</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableWithoutFeedback>

@@ -145,5 +145,12 @@ namespace FireboxGo.Services
         {
             return docDAO.DeleteFile(docID);
         }
+
+        // Calls update password service from the controller
+        public bool UpdatePWService(UserModel user)
+        {
+            user.password = securityHasher.Store(user.password);
+            return userDAO.UpdatePW(user);
+        }
     }
 }

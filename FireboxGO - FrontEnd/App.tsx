@@ -15,6 +15,8 @@ import UpdateItemScreen from './app/UpdateItem';
 import OneItemScreen from './app/OneItem';
 import FileScreen from './app/Files';
 import OneFileScreen from './app/OneFile';
+import CodeScreen from './app/CodeForm';
+import ResetScreen from './app/ResetForm';
 
 const Stack = createNativeStackNavigator();
 function Navigation() {
@@ -35,6 +37,8 @@ function Navigation() {
                 <Stack.Screen name="Item" component={OneItem} />
                 <Stack.Screen name="Files" component={Files} />
                 <Stack.Screen name="File" component={OneFile} />
+                <Stack.Screen name="Code" component={Code} />
+                <Stack.Screen name="Reset" component={Reset} />
             </Stack.Navigator>
         </NavigationContainer>
     );
@@ -122,6 +126,18 @@ function Files({ navigation }) {
 function OneFile({ navigation }) {
     return (
         <OneFileScreen />
+    );
+}
+
+function Code({ navigation }) {
+    return (
+        <CodeScreen />
+    );
+}
+
+function Reset({ navigation }) {
+    return (
+        <ResetScreen />
     );
 }
 

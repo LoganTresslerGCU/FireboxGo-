@@ -9,11 +9,13 @@ namespace FireboxGo.Controllers
     public class UserController : ControllerBase
     {
         private DataService dataService;
+        private RecoveryService recoveryService;
 
         // Data service instantiation
-        public UserController(DataService dataService)
+        public UserController(DataService dataService, RecoveryService recoveryService)
         {
             this.dataService = dataService;
+            this.recoveryService = recoveryService;
         }
 
         // Process user login
@@ -54,7 +56,8 @@ namespace FireboxGo.Controllers
             // Status 1 is a successful register
             if (status == 1)
             {
-                return Ok();
+                int user = dataService.GetUserIDService(userModel);
+                return Ok(user);
             }
             // Status -1 is a unsuccessful register due to username being in use
             else if (status == -1)
@@ -104,6 +107,31 @@ namespace FireboxGo.Controllers
         public IActionResult TagSearchAll(string search, int userID)
         {
             return Ok(dataService.TagSearchAllService(search, userID));
+        }
+
+        // Process sending recovery code
+        [HttpPost("sendCode/{recipientEmail}")]
+        public async Task<IActionResult> CodeGenerate(string recipientEmail)
+        {
+            var code = await recoveryService.SendCodeAsync(recipientEmail);
+            return Ok(code);
+        }
+
+        // Update a password by username
+        [HttpPut("updatePW")]
+        public IActionResult UpdatePW(UserModel user)
+        {
+            bool status = dataService.UpdatePWService(user);
+
+            // if-else Updating was successful, pass user ID back
+            if (status)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }
