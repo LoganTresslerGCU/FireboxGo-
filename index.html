@@ -1,1 +1,182 @@
-<p>Hello</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FireboxGO!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #231F20;
+        }
+        header  {
+            text-align: center;
+            color: #FBB040;
+        }
+        h2 {
+            color: #FBB040;
+            padding: 5px;
+        }
+        .title {
+            background-color: #231F20;
+        }
+        .hero-image {
+            width: 75%;
+            height: auto;
+        }
+        .intro-img {
+            justify-self: center;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                "intro management"
+                "tech approach"
+                "implementation requirements"
+                "future future";
+            gap: 1rem;
+            padding: 1rem;
+        }
+        #intro {
+            grid-area: intro;
+        }
+        #tech {
+            grid-area: tech;
+        }
+        #requirements {
+            grid-area: requirements;
+        }
+        #approach {
+            grid-area: approach;
+        }
+        #future {
+            grid-area: future;
+        }
+        #management {
+            grid-area: management;
+        }
+        section {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .diagram {
+            width: 350px;
+            height: auto;
+        }
+        .logo {
+            width: 200px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FireboxGO!</h1>
+        <h3>Your home on the go.</h3>
+    </header>
+    <main class="grid-container">
+        <section id="intro">
+            <div class="title">
+                <h2>Introduction</h2>
+            </div>
+            <p>Society is ever shifting towards a completely digitial age. Fire safety boxes provide a certain peace of minf when it comes to loosing important documents to house fires or burglaries. However, not everything can be stores inside a small box or even a large safe. Important details about physical property like furniture and electronics would be lost in an accident unless tedious and painstaking notes are taken. Enter FireboxGO!</p>
+            <p>FireboxGO is a mobile application similar in function to a fire safety box but with a much wider reach. Users can catalog every single piece of property in their household along with important PDFs and cherished images. Not only does it provide another layer of back-ups and redundancy, it allows you to store that important information about physical property that would otherwise go undocumented. There's now no need to frantically scribble down all that information in a clunky notebook. It can all be added directly to the app, stored for safe keeping alongside important documents and photos. Furthermore, it allows users to access that information whenever and wherever they may need, making FireboxGO a more versatile option than a large and cumbersome fire safety box.</p>
+            <img class="hero-image" src="assets/house.jpg" alt="House Held in Hands">
+        </section>
+
+        <section id="requirements">
+            <div class="title">
+                <h2>Functional Requirements</h2>
+            </div>
+                <ul>
+                    <li>Login/Register: Users can register an account which they will use to login and store information. A user is capable of reseting their account password should they need to.</li>
+                    <li>Room Folders: Users can create folders representative of the rooms in their house. Here they can store property items. Folders can be assigned tags for management.</li>
+                    <li>Property Items: Users can create items representative of the property they own. Property items can be assigned tags for management.</li>
+                    <li>Files: Users can upload images and PDFs directly from their phone. These files are safely stored and users can download any of these files back onto their phone.</li>
+                    <li>Search: Users can search through folders, items, and files. There are type-specific searches and general search functions, along with a tag-based search.</li>
+                    <li>Account: Users can check in on the metrics and details of their account. Username and email are provided along with metrics like number of rooms, household worth, and more.</li>
+                </ul>
+            <div class="title">
+                <h2>Non-Functional Requirements</h2>
+            </div>
+                <ul>
+                    <li>Password Hashing: User passwords are encrypted and stored in clear text to facilitate security. This was chosen to safely manage the sensitive data that is handled by the app.</li>
+                </ul>
+            <div class="title">
+                <h2>Future Requirements</h2>
+            </div>
+                <p>From here, the FireboxGO team plans to continue development. The immediate next steps are to host the back-end API and database in Azure Cloud. After that, more features will be brainstormed, planned out, and developed. Lastly in the current plan, FireboxGO will eventually be developed for iOS and added to both the Apple Store and the Google Play Store for public use.</p>
+        </section>
+
+        <section id="tech">
+            <div class="title">
+                <h2>Technologies</h2>
+            </div>
+                <img class="logo" src="assets/react.png" alt="React Native Logo">
+                <h4>React Native</h4>
+                <p>React Native was chosen for the front-end of FireboxGO because it allows for cross-platform development. This allows for deployment of the same application across iOS and Android devices. React Native has strong community support, rich libraries, and it well-suited overall for mobile development. React Native was initially unfamiliar to the development team. However, the team was interested in learning React Native as it was one of the top mobile development languages. Research and sandbox playtesting allowed the team to quickly become familiar with the language.</p>
+                
+                <img class="logo" src="assets/asp.png" alt="ASP.NET Core Logo">
+                <h4>ASP.NET Core</h4>
+                <p>ASP.NET Core was chosen for the back-end of FireboxGO becuase it has a modern framework meant for building robust APIs. It comes with dozens of development tools that further support it being the premier choice for a maintainable server-side application. Overall, it meshes well with the security set-up and the API design that was envisioned for FireboxGO. ASP was chosen due to the team's intense familiarity with the framework.</p>
+
+                <img class="logo" src="assets/mysql.png" alt="MySQL Logo">
+                <h4>MySQL Databases</h4>
+                <p>MySQL was chosen as the database for this project because it is a reliable and well-established relational database management system. Its structured query language and strong compatibility with ASP.NET Core made it the natural choice for managing FireboxGO's data. Additionally, MySQL's scalability made it a dependable choice as FireboxGO grows larger. MySQL was chosen due to the team's intense familiarity with the database type.</p>
+
+                <img class="logo" src="assets/azure.png" alt="Azure Logo">
+                <h4>Azure Cloud Services</h4>
+                <p>Azure Cloud Services has been selected for future implementation to support FireboxGO's scalability and reach. While not yet integrated, Azure offers a suite of tools for deployment and monitoring. It also has a seamless integration with ASP.NET Core and support for services like Azure SQL, App Services, and DevOps pipelines make it an ideal platform for hosting and maintaining FireboxGO as it grows.</p>
+        </section>
+
+        <section id="implementation">
+            <div class="title">
+                <h2>Implementation</h2>
+            </div>
+                <h4>Software Development Lifecycle</h4>
+                <img class="diagram" src="assets/sdlc.png" alt="Software Development Lifecycle Diagram">
+                <p>The timeline of FireboxGO was guided by the Software Development Lifecycle (SDLC). It provided structure to the development process, from initial planning and requirements planning to implementation and deployment. This approach allowed for FireboxGO's team to aquire a clear raodmap and an organized workflow as the project progressed.</p>
+
+                <h4>MVC Architecture</h4>
+                <img class="diagram" src="assets/mvc.png" alt="Model-View-Controller Diagram">
+                <p>The Model-View-Controller (MVC) architecture was implemented to separate concerns and improve maintainability. The model handled the various objects that were being utilized by the back-end. The view was the React Native front-end. The controller handled data and business logic, primarily through Data-Access Objects.</p>
+        </section>
+
+        <section id="approach">
+            <div class="title">
+                <h2>Technical Approach</h2>
+            </div>
+            <p>Below are four primary diagrams, highlighting the technical design of FireboxGO!</p>
+
+            <h4>Sitemap</h4>
+            <img class="diagram" src="assets/sitemap.png" alt="Sitemap Diagram">
+
+            <h4>Example UI Design</h4>
+            <img class="diagram" src="assets/ui.png" alt="UI Design">
+
+            <h4>Logical Solution</h4>
+            <img class="diagram" src="assets/logical.png" alt="Logical Solution Diagram">
+
+            <h4>Physical Solution</h4>
+            <img class="diagram" src="assets/physical.png" alt="Physical Solution Diagram">
+        </section>
+
+        <section id="management">
+            <div class="title">
+                <h2>Risks & Challenges</h2>
+            </div>
+                <p><strong>Risks:</strong> The team had never developed a mobile application before. So this endeavor was a large risk. However, a back-up plan was put in place to switch to a web-based application if mobile development fell through or was costing too much. This also was compounded by the team's unfamiliarity with React Native as a language. However, a Proof-of-Concept app was initially developed to prove that the team was capable of delivering a basic mobile application developed in React Native.</p>
+                <p><strong>Challenges:</strong> The team consisted of only one member. The entiret or the project from planning to development was on them alone. However, they were able to manage their time well to meet deadlines and plan out feature production accordingly. It was done in a way that was time-effective while not being overly stressful.</p>
+
+            <div class="title">
+                <h2>Outstanding Issues</h2>
+            </div>
+                <p>There are currently no outstanding issues with FireboxGO. Any issues encountered during future development will be added here.</p>
+        </section>
+    </main>
+</body>
+</html>
